@@ -1,0 +1,11 @@
+name: scanalyzer # saf
+version: 0.3.14 # version number, commit id, ... (optional)
+origin: https://github.com/sjmini/icse2020-Solidity # optional
+info:  # optional
+image: geriul/scanalyzer:latest # id of Docker image (mandatory)
+bin: scripts # folder with programs that will be accessible in the Docker container
+output: /opt/analyzer/test_result.txt
+# add the section below if the tool is able to analyse Solidity source code
+solidity:
+    entrypoint: "'$BIN/do_solidity.sh' '$FILENAME' '$TIMEOUT' '$BIN'"
+    solc: yes
