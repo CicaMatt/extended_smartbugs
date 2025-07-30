@@ -1,7 +1,7 @@
 name: ScType
 origin: https://github.com/NioTheFirst/ScType
 info: ScType is based on Slither and consists of a type annotation parser, a type propagation system, and a type checking system. It is inter-procedural and cross-contract, meaning that it may automatically include functions from other contracts in analysis (if their code is available). It also handles arrays and object fields. To reduce the overhead of supporting context-sensitivity, it caches analysis results for each function.
-image: icse24sctype/full:latest
+image: marianocecc/sctype
 output: /output.json
 bin: scripts
 solidity:
