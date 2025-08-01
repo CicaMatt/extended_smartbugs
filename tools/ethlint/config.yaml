@@ -1,0 +1,9 @@
+name: Ethlint
+version: 1.2.5
+origin: https://github.com/duaraghav8/Ethlint
+info: Code quality and security linter for Solidity.
+image: michelepasqua/ethlint:latest 
+bin: scripts
+solidity:
+    command: "'$BIN/do_solidity.sh' '$FILENAME' '$TIMEOUT'" 
+    solc: false
