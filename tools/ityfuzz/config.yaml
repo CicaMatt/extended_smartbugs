@@ -1,0 +1,9 @@
+name: ItyFuzz
+origin: https://github.com/fuzzland/ityfuzz
+info: Blazing Fast Bytecode-Level Hybrid Fuzzer for Smart Contracts.
+image: michelepasqua/ityfuzz:latest 
+bin: scripts
+output: out
+solidity:
+    entrypoint: "'$BIN/do_solidity.sh' '$FILENAME' '$TIMEOUT' '$BIN'"
+    solc: yes
