@@ -1,0 +1,13 @@
+name: etainter # optional
+version: 0.1 # version number, commit id, ... (optional)
+origin: https://github.com/DependableSystemsLab/eTainter # optional
+info: static analysis tool for detecting gas-related vulnerabilities in smart contracts. # optional
+image: geriul/etainter:latest # id of Docker image (mandatory)
+output: /app/output.project.json
+bin: scripts # folder with programs that will be accessible in the Docker container
+# add the section below if the tool is able to analyse Solidity source code
+solidity:
+    entrypoint: "'$BIN/do_solidity.sh' '$FILENAME' '$TIMEOUT' '$BIN'"
+    solc: yes
+bytecode:
+    entrypoint: "'$BIN/do_bytecode.sh' '$FILENAME' '$TIMEOUT' '$BIN'"

@@ -1,0 +1,10 @@
+name: soliditycheck # optional
+version: 0.1 # version number, commit id, ... (optional)
+origin: https://github.com/xf97/SolidityCheck # optional
+info:  A static code problem analysis tool based on regular expressions and program instrumentation
+image: xf15850673022/soliditycheck:latest # id of Docker image (mandatory)
+#output: /app/output.project.json
+bin: scripts # folder with programs that will be accessible in the Docker container
+
+solidity:
+    entrypoint: "'$BIN/do_solidity.sh' '$FILENAME' '$TIMEOUT' '$BIN'"

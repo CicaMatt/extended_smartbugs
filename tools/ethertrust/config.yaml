@@ -1,0 +1,11 @@
+name: ethertrust # optional
+version: 0.1 # version number, commit id, ... (optional)
+origin: where to find more on the tool, e.g. an URL # optional
+info: EtherTrust is a static analysis tool that implements a sound analysis of Ethereum Smart contracts.
+image: geriul/ethertrust:latest # id of Docker image (mandatory)
+bin: scripts # folder with programs that will be accessible in the Docker container
+output: /ethertrust/results/output.json
+# add the section below if the tool is able to analyse bytecode (deployment code)
+bytecode:
+    entrypoint: "'$BIN/do_bytecode.sh' '$FILENAME' '$TIMEOUT'"
+

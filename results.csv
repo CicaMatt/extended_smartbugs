@@ -1,0 +1,4 @@
+filename,basename,toolid,toolmode,parser_version,runid,start,duration,exit_code,findings,infos,errors,fails
+samples/reentrance.sol,reentrance.sol,soliditycheck,solidity,2025/07/9,20250709_1229,1752064169.666601,0.44742512702941895,1,{Reentrancy},{Parameter: _amount (type: uint)},{EXIT_CODE_1},{}
+samples/reentrance.sol,reentrance.sol,soliditycheck,solidity,2025/07/9,20250709_1230,1752064204.821789,0.2964138984680176,1,{Reentrancy},{Parameter: _amount (type: uint)},{EXIT_CODE_1},{}
+samples/EtherLotto.sol,EtherLotto.sol,soliditycheck,solidity,2025/07/9,20250709_1252,1752065571.250266,0.39130401611328125,1,{},{No reentrancy detected.},{EXIT_CODE_1},{}
