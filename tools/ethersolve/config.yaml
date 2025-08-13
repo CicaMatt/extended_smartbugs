@@ -1,0 +1,11 @@
+name: EtherSolve
+version: 1.0
+origin: https://github.com/SeUniVr/EtherSolve
+info: Tool for CFG reconstruction and static analysis of Solidity smart-contracts from Ethereum bytecode.
+image: michelepasqua/ethersolve:latest 
+bin: scripts
+output: out
+bytecode:
+    entrypoint: "'$BIN/do_bytecode.sh' '$FILENAME' '$TIMEOUT'"
+runtime:
+    entrypoint: "'$BIN/do_runtime.sh' '$FILENAME' '$TIMEOUT'"
