@@ -1,21 +1,28 @@
 alias:
     - confuzzius
     - conkas
+    - etainter
     - ethainter
+    - ethertrust
     - ethor
+    - gigahorse
     - honeybadger
-    - maian
     - madmax
+    - maian
     - manticore
     - mythril
     - osiris
     - oyente
     - pakala
+    - rnvuldet
+    - scanalyzer
     - securify
     - semgrep
     - sfuzz
+    - siguard
     - slither
     - smartcheck
     - solhint
     - teether
     - vandal
+    - vulpedia
