@@ -5,7 +5,7 @@ alias:
     - ethainter
     - ethertrust
     - ethor
-    - gigahorse
+   # - gigahorse
     - honeybadger
     - madmax
     - maian
@@ -25,4 +25,4 @@ alias:
     - solhint
     - teether
     - vandal
-    - vulpedia
+   # - vulpedia
