@@ -1,0 +1,9 @@
+reentrancy:
+  impact: high
+  classification: SWC-107, DASP-1
+timestamp:
+  impact: low
+  classification: SWC-101, DASP-3
+unchecked-return:
+  impact: medium
+  classification: SWC-104, DASP-4

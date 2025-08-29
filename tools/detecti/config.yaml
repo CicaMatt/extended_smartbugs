@@ -1,0 +1,12 @@
+name: detecti # nome per identificare il tool quando bisogna chiamarlo da linea di comando (smartbugs -t detecti -f <file>)
+version: 0.1 # version number(optional)
+origin: https://github.com/Oss28/Detecti?tab=readme-ov-file # optional
+info: Vulnerability Detection Tool. # optional
+image: geriul/detecti:latest # id of Docker image (mandatory)
+output: /app/output.json # path where the output of the tool will be saved (mandatory) In questo caso l'output generato dal tool è un file JSON che contiene le vulnerabilità trovate e viene salvato nella cartella /app del container Docker. Il file sarà poi copiato nella cartella tools/detecti/output.json del progetto.
+bin: scripts # folder with programs that will be accessible in the Docker container
+# add the section below if the tool is able to analyse Solidity source code
+solidity:
+    entrypoint: "'$BIN/do_solidity.sh' '$FILENAME' '$TIMEOUT' '$BIN'" # entrypoint script that will be executed in the Docker container (mandatory)
+    # The entrypoint script is responsible for running the tool.
+    solc: yes
