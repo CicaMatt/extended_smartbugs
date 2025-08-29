@@ -1,13 +1,17 @@
 alias:
     - confuzzius
+    - confuzziusBI
     - conkas
     - detecti
     - etainter
     - ethainter
+    - ethersolve
     - ethertrust
+    - ethlint
     - ethor
    # - gigahorse
     - honeybadger
+    - ityfuzz
     - madmax
     - maian
     - manticore
@@ -24,6 +28,7 @@ alias:
     - slither
     - smartcheck
     - solhint
+    - soliditycheck
     - teether
     - vandal
    # - vulpedia
