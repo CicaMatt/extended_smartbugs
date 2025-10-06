@@ -1,7 +1,11 @@
 #Ignore results
 results/
 test_contracts/
+test_contracts/*.*
 test_contracts/*/*/*
+samples/
+samples/*.*
+samples/*/*/*
 
 #Ignore DS_Store
 .DS_Store
