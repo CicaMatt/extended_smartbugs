@@ -1,10 +1,14 @@
 import sb.parse_utils # for sb.parse_utils.init(...)
 import io, tarfile    # if the output parameter is used
 
-VERSION: str = ...
+from tools.sfuzz.parser import vulnerabilities
+
+VERSION: str = "2022/08/15"
 """identify the version of the parser, e.g. '2022/08/15'"""
 
-FINDINGS: set[str]  = ...
+FINDINGS: set[str]  = {
+    "Unbounded-Loop",
+    "DoS-With-Failed-Call",}
 """set of strings: all possible findings, of which 'findings' below will be a subset"""
 
 
@@ -26,23 +30,42 @@ def parse(exit_code, log, output):
 
     findings, infos = [], set()
     errors, fails = sb.parse_utils.errors_fails(exit_code, log)
+    #errors, fails = set(), set()
     # Parses the output for common Python/Java/shell exceptions (returned in 'fails')
+
+    vulnerability = None
+    message = None
+    function_name = None
+    function_address = None
+    found = False
 
     for line in log:
         # analyse stdout/stderr of the Docker run
-        ...
-
-    try:
-        with io.BytesIO(output) as o, tarfile.open(fileobj=o) as tar:
-
-            # access specific file
-            contents_of_some_file = tar.extractfile("name_of_some_file").read()
-
-            # iterate over all files:
-            for f in tar.getmembers():
-                contents_of_f = tar.extractfile(f).read()
-    except Exception as e:
-        fails.add(f"error parsing results: {e}")
+        if "Unbounded loop condition in function" in line:
+            vulnerability = "Unbounded-Loop"
+            message = "Unbounded loop condition found"
+            function_name = line.split(":")[1].strip()
+            found = True
+        elif "DoS-With-Failed-Call in function" in line:
+            vulnerability = "DoS-With-Failed-Call"
+            message = "DoS-With-Failed-Call found"
+            function_name = line.split(":")[1].strip()
+            found = True
+        elif line.startswith("("):
+            function_address = line.replace("(", "").replace(")", "").replace(":", "").strip().split(" ")[0].strip()
+            if found:
+                findings.append({
+                    "name": vulnerability,
+                    "function": function_name,
+                    "address": function_address,
+                    "message": message,
+                    "severity": "high",
+                })
+                vulnerability = None
+                message = None
+                function_name = None
+                function_address = None
+                found = False
 
     return findings, infos, errors, fails
     """
@@ -83,3 +106,13 @@ def parse(exit_code, log, output):
     directory (if it exists), with "name" serving as the key.
     """
 
+
+
+# def main():
+#     file = open(file_name, "r")
+#     findings, infos, errors, fails = parse(None, file, None)
+#     for line in findings:
+#         print(line)
+#
+# if __name__ == '__main__':
+#     main()
