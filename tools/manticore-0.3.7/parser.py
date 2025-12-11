@@ -5,28 +5,29 @@ VERSION = "2022/11/17"
 
 FINDINGS = set()
 
-def parse_file(lines):
-    findings = []
+def parse_file(lines: list[bytes]) -> list[dict]:
+    findings: list[dict] = []
     snippet = False
+    finding: dict = {}
     for line in lines:
         if snippet:
             snippet = False
-            l = line.split()
-            finding["line"] = int(l[0])
-            finding["code"] = c
-        elif line.startwith("  Solidity snippet:"):
+            parts = line.split()
+            if finding and parts:
+                finding["line"] = int(parts[0])
+                finding["code"] = line
+        elif line.startswith(b"  Solidity snippet:"):
             snippet = True
-        elif line[0] == "-":
-            finding = {
-                "name": line[1:-2].strip()
-            }
+        elif line[0:1] == b"-":
+            finding = {"name": line[1:-2].strip().decode("utf-8", errors="ignore")}
             findings.append(finding)
             continue
     return findings
 
 
 def parse(exit_code, log, output):
-    findings, infos = [], set()
+    findings: list[dict] = []
+    infos: set[str] = set()
     errors, fails = sb.parse_utils.errors_fails(exit_code, log)
 
     if any("Invalid solc compilation" in line for line in log):
@@ -47,18 +48,18 @@ def parse(exit_code, log, output):
 
                 cmd = None
                 try:
-                    fn = fn.replace("/global.findings","/manticore.yml")
+                    fn = fn.replace("/global.findings", "/manticore.yml")
                     cmd = yaml.safe_load(tar.extractfile(fn).read())
-                except Exception as e:
-                    infos.add(f"manticore.yml not found")
+                except Exception:
+                    infos.add("manticore.yml not found")
 
                 filename, contract = None, None
-                if isinstance(cmd,dict):
+                if isinstance(cmd, dict):
                     cli = cmd.get("cli")
-                    if isinstance(cli,dict):
+                    if isinstance(cli, dict):
                         contract = cli.get("contract")
                         argv = cli.get("argv")
-                        if isinstance(argv,list) and len(argv) > 0:
+                        if isinstance(argv, list) and len(argv) > 0:
                             filename = argv[0]
 
                 for mf in manticore_findings:

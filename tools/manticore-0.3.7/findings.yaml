@@ -1,0 +1,13 @@
+Potential reentrancy vulnerability:
+    classification: SWC-107
+Reachable ether leak to sender:
+    classification: SWC-107
+Unsigned integer overflow at ADD instruction:
+    classification: SWC-101
+Signed integer overflow at ADD instruction:
+    classification: SWC-101
+Unsigned integer overflow at SUB instruction:
+    classification: SWC-101
+Signed integer overflow at SUB instruction:
+    classification: SWC-101
+
