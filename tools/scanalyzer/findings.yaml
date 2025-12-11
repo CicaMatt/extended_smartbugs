@@ -1,0 +1,15 @@
+Uninitialized storage pointer: 
+    classification: SWC-109
+Usage of Deprecated API:
+    classification: SWC-111
+Functions without Visibility:
+    classification: SWC-100
+Misuse of Constructors:
+    classification: SWC-118
+Storage Variable Shadowing Confusion:
+    classification: SWC-119
+Inheritance Order Confusion:
+    classification: SWC-125
+Type casting to arbitrary contracts: {}
+Typo of the += operator: {}
+

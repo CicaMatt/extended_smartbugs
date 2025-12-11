@@ -1,13 +1,18 @@
 import sb.parse_utils # for sb.parse_utils.init(...)
-import io, tarfile    # if the output parameter is used
-import ...            # any further imports
+import io, tarfile, re   # if the output parameter is used
 
-VERSION: str = ...
-"""identify the version of the parser, e.g. '2022/08/15'"""
+VERSION: str = "11/12/2025"
 
-FINDINGS: set[str]  = ...
-"""set of strings: all possible findings, of which 'findings' below will be a subset"""
-
+FINDINGS = {
+    "Misuse of constructor", 
+    "Function without visibility", 
+    "Storage variable shadowing confusion", 
+    "Type casting to arbitrary contracts", 
+    "Inheritance order confusion", 
+    "Uninitialized storage pointer", 
+    "Typo of the += operator", 
+    "Usage of Deprecated API"
+}
 
 def parse(exit_code, log, output):
     """
@@ -29,19 +34,90 @@ def parse(exit_code, log, output):
     errors, fails = sb.parse_utils.errors_fails(exit_code, log)
     # Parses the output for common Python/Java/shell exceptions (returned in 'fails')
 
-    for line in log:
-        # analyse stdout/stderr of the Docker run
-        ...
+    found_func_error = False
+    found_var_error  = False
 
     try:
         with io.BytesIO(output) as o, tarfile.open(fileobj=o) as tar:
+            pattern = re.compile(
+                r'^Analyzed\s*:\s*(.+?)\n\nDetail Information\n\n$',
+                re.DOTALL
+            )
 
-            # access specific file
-            contents_of_some_file = tar.extractfile("name_of_some_file").read()
+            contents_bytes = tar.extractfile("test_result.txt").read()
+            contents = contents_bytes.decode('utf-8', errors='ignore')
 
-            # iterate over all files:
-            for f in tar.getmembers():
-                contents_of_f = tar.extractfile(f).read()
+            # 1. Caso: output vuoto + controllo errori nel log
+            m = pattern.search(contents)
+            if m:
+                if not log[0].startswith("The command 'runTest' took"):
+                    for line in log:
+                        s = line.strip()
+
+                        # Caso 1 — Error in Function Definition
+                        if "Error in Function Definition" in s and not found_func_error:
+                            errors.add(s)
+                            found_func_error = True
+
+                        # Caso 2 — Error in VariableDeclaration
+                        elif "Error in VariableDeclaration" in s and not found_var_error:
+                            errors.add(s)
+                            found_var_error = True
+
+                        # Se hai trovato entrambi puoi anche uscire dal loop
+                        if found_func_error and found_var_error:
+                            break
+                return findings, infos, errors, fails
+
+            # 2. Caso: output pieno + controllo errori nel log
+            for line in contents.splitlines():
+                line = line.strip()
+
+                if not line:
+                    continue
+
+                if line.startswith("Uninitialized storage pointer"):
+                    findings.append({"name": "Uninitialized storage pointer"})
+
+                if line.startswith("Function without visibility"):
+                    findings.append({"name": "Function without visibility"})
+                
+                if line.startswith("Inheritance order confusion"):
+                    findings.append({"name": "Inheritance order confusion"})
+                
+                if line.startswith("Typo of the += operator"):
+                    findings.append({"name": "Typo of the += operator"})
+                
+                if line.startswith("Storage variable shadowing confusion"):
+                    findings.append({"name": "Storage variable shadowing confusion"})
+                
+                if line.startswith("Misuse of constructor"):
+                    findings.append({"name": "Misuse of constructor"})
+                
+                if line.startswith("Type casting to arbitrary contracts"):
+                    findings.append({"name": "Type casting to arbitrary contracts"})
+                
+                if line.startswith("Usage of Deprecated API"):
+                    findings.append({"name": "Usage of Deprecated API"})
+            
+            if not log[0].startswith("The command 'runTest' took"):
+                for line in log:
+                    s = line.strip()
+
+                    # Caso 1 — Error in Function Definition
+                    if "Error in Function Definition" in s and not found_func_error:
+                        errors.add(s)
+                        found_func_error = True
+
+                    # Caso 2 — Error in VariableDeclaration
+                    elif "Error in VariableDeclaration" in s and not found_var_error:
+                        errors.add(s)
+                        found_var_error = True
+
+                    # Se hai trovato entrambi puoi anche uscire dal loop
+                    if found_func_error and found_var_error:
+                        break
+                            
     except Exception as e:
         fails.add(f"error parsing results: {e}")
 
