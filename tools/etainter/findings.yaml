@@ -1,0 +1,6 @@
+DoS-With-Failed-Call:
+  impact: high
+  classification: SWC-113, DASP-5
+Unbounded-Loop:
+  impact: high
+  classification: SWC-128, DASP-5
