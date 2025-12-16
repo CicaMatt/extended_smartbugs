@@ -40,6 +40,10 @@ def parse(exit_code, log, output):
     found = False
 
     for line in log:
+        if "cannot fit 'int' into an index-sized integer" in line:
+            errors.add("analysis reports errors, check output.json")
+        if "too many digits in integer" in line:
+            errors.add("analysis reports errors, check output.json")
         # analyse stdout/stderr of the Docker run
         if "Unbounded loop condition in function" in line:
             vulnerability = "Unbounded-Loop"
