@@ -37,8 +37,10 @@ try:
 except ImportError:
     tqdm = None
 
+# Original binary download location
+# BINARY_DOWNLOAD_BASE = "https://solc-bin.ethereum.org/{}-amd64/{}"
 
-BINARY_DOWNLOAD_BASE = "https://solc-bin.ethereum.org/{}-amd64/{}"
+BINARY_DOWNLOAD_BASE = "https://binaries.soliditylang.org/{}-amd64/{}"
 SOURCE_DOWNLOAD_BASE = "https://github.com/ethereum/solidity/releases/download/v{}/{}"
 GITHUB_RELEASES = "https://api.github.com/repos/ethereum/solidity/releases?per_page=100"
 
