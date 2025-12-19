@@ -1,0 +1,4 @@
+tx-origin:
+	classification: SWC-115
+re-entrancy:
+	classification: SWC-107
