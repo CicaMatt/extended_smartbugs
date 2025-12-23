@@ -22,6 +22,8 @@ def parse(exit_code, log, output):
     for line in log:
         if "No reentrant" in line:
             infos.add("No reentrancy detected.")
+            # end of analysis
+            break
         elif "-----Insert line number-----" in line:
             reentrancy_found = True
         elif line.startswith("line "):

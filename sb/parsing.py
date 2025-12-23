@@ -35,7 +35,17 @@ def parse(task_log, tool_log, tool_output):
                 raise sb.errors.SmartBugsError(f"'{finding['name']}' not among the findings of {tool['id']}")
             # check that filename within docker corresponds to filename outside, before replacing it
             # splitting at "/" is ok, since it is a Linux path from within the docker container
-            assert not finding.get("filename") or filename.endswith(finding["filename"].split("/")[-1])
+
+            # assert not finding.get("filename") or filename.endswith(finding["filename"].split("/")[-1])
+            
+            vfile = finding.get("filename")
+
+            # filename virtuale (yul / internal)
+            if vfile and vfile.startswith("#"):
+                pass  # accetta il finding
+            else:
+                assert not vfile or filename.endswith(vfile.split("/")[-1])
+
             finding["filename"] = filename
     except Exception as e:
         raise

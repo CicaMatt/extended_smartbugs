@@ -1,11 +1,12 @@
 import sb.parse_utils # for sb.parse_utils.init(...)
 import io, tarfile    # if the output parameter is used
 
-VERSION: str = ...
+VERSION = "2025/12/22"
 """identify the version of the parser, e.g. '2022/08/15'"""
 
-FINDINGS: set[str]  = ...
-"""set of strings: all possible findings, of which 'findings' below will be a subset"""
+FINDINGS = {
+    "Signature Based Vulnerabilities",
+}
 
 
 def parse(exit_code, log, output):
@@ -29,20 +30,25 @@ def parse(exit_code, log, output):
     # Parses the output for common Python/Java/shell exceptions (returned in 'fails')
 
     for line in log:
-        # analyse stdout/stderr of the Docker run
-        ...
+        if "The analysis was completed successfully. No issues were detected." in line:
+            infos.add("No issues detected.")
+            break
+        elif "[ERROR]: Solc experienced a fatal error" in line:
+            errors.add("Solc fatal error encountered.")
+            break
+        else:
+            print(line)
+    # try:
+    #     with io.BytesIO(output) as o, tarfile.open(fileobj=o) as tar:
 
-    try:
-        with io.BytesIO(output) as o, tarfile.open(fileobj=o) as tar:
+    #         # access specific file
+    #         contents_of_some_file = tar.extractfile("name_of_some_file").read()
 
-            # access specific file
-            contents_of_some_file = tar.extractfile("name_of_some_file").read()
-
-            # iterate over all files:
-            for f in tar.getmembers():
-                contents_of_f = tar.extractfile(f).read()
-    except Exception as e:
-        fails.add(f"error parsing results: {e}")
+    #         # iterate over all files:
+    #         for f in tar.getmembers():
+    #             contents_of_f = tar.extractfile(f).read()
+    # except Exception as e:
+    #     fails.add(f"error parsing results: {e}")
 
     return findings, infos, errors, fails
     """

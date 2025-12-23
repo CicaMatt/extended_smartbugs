@@ -1,5 +1,5 @@
 import io
-import tarfile
+import tarfile, os
 from typing import Optional
 
 import sb.parse_utils
@@ -8,7 +8,7 @@ import csv
 
 VERSION: str = "2025/12/10"
 
-FINDINGS: {
+FINDINGS: set[str]  = {
     "tx-origin",
     "re-entrancy"
 }
@@ -17,42 +17,62 @@ def parse(
     exit_code: Optional[int], log: list[str], output: bytes
 ) -> tuple[list[dict[str, object]], set[str], set[str], set[str]]:
 
-    findings: list[dict[str, object]] = []
-    infos: set[str] = set()
+    findings, infos = [], set()
     errors, fails = sb.parse_utils.errors_fails(exit_code, log)
 
-    tx_origin_file_found = False
-    re_entrancy_file_found = False
+    tx_origin_rows = []
+    reentrancy_rows = []
 
+    has_tx_origin = False
+    has_reentrancy = False
+
+    if output is None or len(output) == 0:
+        fails.add("error parsing results: no output generated")
+        return findings, infos, errors, fails
+    
     try:
         with io.BytesIO(output) as o, tarfile.open(fileobj=o) as tar:
-            for f in tar.getmembers():
-                if f.name.endswith("tx-origin.csv"):
-                    tx_origin_tar = io.TextIOWrapper(tar.extractfile(f), encoding='utf-8')
-                    tx_origin_csv = csv.reader(tx_origin_tar)
-                    tx_origin_list = list(tx_origin_csv)[1:]
-                    tx_origin_file_found = True
-                if f.name.endswith("re-entrancy.csv"):
-                    re_entrancy_tar = io.TextIOWrapper(tar.extractfile(f), encoding='utf-8')
-                    re_entrancy_csv = csv.reader(re_entrancy_tar)
-                    re_entrancy_list = list(re_entrancy_csv)[1:]
-                    re_entrancy_file_found = True
+            for member in tar.getmembers():
+                if not member.name.startswith("out/"):
+                    continue
+
+                name = member.name.split("/")[-1]
+                if "tx-origin.csv" in name:
+                    f = tar.extractfile(member)
+                    if f:
+                        reader = csv.DictReader(io.TextIOWrapper(f, encoding="utf-8", errors="replace"))
+                        tx_origin_rows = list(reader)
+                        if len(tx_origin_rows) > 0:
+                            has_tx_origin = True
+
+                elif "re-entrancy.csv" in name:
+                    f = tar.extractfile(member)
+                    if f:
+                        reader = csv.DictReader(io.TextIOWrapper(f, encoding="utf-8", errors="replace"))
+                        reentrancy_rows = list(reader)
+                        if len(reentrancy_rows) > 0:
+                            has_reentrancy = True
+
     except Exception as e:
         fails.add(f"error parsing results: {e}")
 
-    if tx_origin_file_found and re_entrancy_file_found:
-        for row in tx_origin_list:
-            issue = {}
-            issue['name'] = "tx-origin"
-            issue['address'] = int(row[0])
-            issue['message'] = row[2]
-            findings.append(issue)
-        
-        for row in re_entrancy_list:
-            issue = {}
-            issue['name'] = "re-entrancy"
-            issue['address'] = int(row[0])
-            issue['message'] = row[2]
-            findings.append(issue)
+    if has_tx_origin:
+        tx_findings = [t['detection'] for t in tx_origin_rows]  
+        tx_findings = list(set(tx_findings))
+
+        issue = {}
+        issue['name'] = "tx-origin"
+        issue['message'] = tx_findings
+        findings.append(issue)
+
+    if has_reentrancy:
+        reentrancy_findings = [r['detection'] for r in reentrancy_rows]
+        reentrancy_findings = list(set(reentrancy_findings))
+
+        issue = {}
+        issue['name'] = "re-entrancy"
+        issue['message'] = reentrancy_findings
+        findings.append(issue)
+            
 
     return findings, infos, errors, fails
